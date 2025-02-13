@@ -18,7 +18,7 @@ import {
   Trash,
   X,
 } from "lucide-react";
-import { planningPokerSchema } from "../../_libs/planning-poker";
+import { planningPokerSchema } from "../../../_libs/planning-poker";
 import {
   PlanningPokerForm,
   UserSroryForm,

@@ -15,8 +15,15 @@ interface InitPlanningPoker {
 
 export const initPlanningPoker = async ({ title }: InitPlanningPoker) => {
   const { data } = await axios.post(
-    "http://localhost:3001/planning-poker/createlp",
+    "http://localhost:3001/planning-poker/create",
     { title }
+  );
+  return data as PlanningPokerFromApi;
+};
+
+export const remove = async ({ id }: { id: string }) => {
+  const { data } = await axios.delete(
+    `http://localhost:3001/planning-poker/delete/${id}`
   );
   return data as PlanningPokerFromApi;
 };

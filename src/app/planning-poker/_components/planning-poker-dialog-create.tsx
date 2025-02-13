@@ -37,9 +37,9 @@ const PlanningPokerDialogCreate = () => {
     mutationFn: async (value: { title: string }) => {
       return initPlanningPoker(value);
     },
-    onSuccess: async () => {
+    onSuccess: async (value) => {
       setTimeout(() => {
-        redirect(`/planning-poker/admin/edition/`);
+        redirect(`/planning-poker/admin/edition/${value.id}`);
       }, 3000);
     },
     onError: (error) => {

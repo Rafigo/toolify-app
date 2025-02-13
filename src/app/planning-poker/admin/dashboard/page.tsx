@@ -1,8 +1,8 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, Edit } from "lucide-react";
+import { ArrowUpDown, Edit, Trash } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { DataTable } from "@/components/data-table/data-table";
@@ -11,9 +11,30 @@ import { PlanningPokerFromApi } from "@/models/planning-poker.model";
 import { mapPlanningPokerObject } from "@/services/planning-poker/planning-poker.mapper";
 import { getAllPlanningPoker } from "@/services/planning-poker/planning-poker.service";
 import PlanningPokerDialogCreate from "../../_components/planning-poker-dialog-create";
+import { remove } from "@/services/planning-poker/planning-poker.service";
+import Actionvalidation from "@/components/action-validation/action-validation";
 
 const DashboardPage = () => {
+  const queryClient = useQueryClient();
   const planningPokerMessage = useTranslations("PlanningPoker");
+
+  const { data, error, isLoading } = useQuery({
+    queryKey: ["getAllPlanningPoker"],
+    queryFn: getAllPlanningPoker,
+  });
+
+  const { mutate } = useMutation({
+    mutationFn: async (value: { id: string }) => {
+      return remove({ id: value.id });
+    },
+    onSuccess: async () => {
+      queryClient.invalidateQueries();
+    },
+    onError: (error) => {
+      console.error("Erreur lors de la soumission:", error);
+    },
+  });
+
   const columns: ColumnDef<PlanningPokerFromApi>[] = [
     {
       accessorKey: "title",
@@ -48,20 +69,22 @@ const DashboardPage = () => {
         const planningPoker = row.original;
 
         return (
-          <>
-            <Link href={`edit/${planningPoker.sessionUrl}`}>
-              <Edit size="20px" />
+          <div className="flex gap-2 items-center">
+            <Link href={`edition/${planningPoker.id}`} title="Editer">
+              <Edit size="18px" />
             </Link>
-          </>
+            <Actionvalidation
+              mainTitle="Suppression d'un planning poker"
+              mainDescription="Vous êtes sur le point de supprimer un planning poker. Voulez-vous continuer ?"
+              mainActionLabel=""
+              mainIcon={<Trash />}
+              onValidate={() => mutate({ id: planningPoker.id })}
+            />
+          </div>
         );
       },
     },
   ];
-
-  const { data, error, isLoading } = useQuery({
-    queryKey: ["getAllPlanningPoker"],
-    queryFn: getAllPlanningPoker,
-  });
 
   return (
     <div className="flex flex-col gap-8 bg-white p-8 border rounded-xl">
