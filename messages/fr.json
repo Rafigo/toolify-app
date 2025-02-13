@@ -1,0 +1,63 @@
+{
+  "Misc": {
+    "notAuthorized": "Vous n'êtes pas autorisé à accéder à cette page"
+  },
+  "AppHeader": {
+    "title": "Toolify",
+    "login": "Se connecter",
+    "logout": "Se déconnecter"
+  },
+  "HomePage": {
+    "jumbotron": {
+      "title": "Toolify",
+      "description": "Planning poker, documentation, et bien plus encore"
+    },
+    "links": {
+      "planningPoker": {
+        "title": "Planning Poker",
+        "description": "Créer vos planning poker en toute simplicité, lancez des sessions à la demande"
+      },
+      "documentation": {
+        "title": "Documentation",
+        "description": "Enrichissez votre documentation technique, et collaborer avec vos collègues éphémères"
+      },
+      "accessLink": "Accéder à l'univers"
+    }
+  },
+  "PlanningPoker": {
+    "breadcrumb": {
+      "home": "Accueil",
+      "admin": "Administration",
+      "planning-poker": "Planning Poker",
+      "dashboard": "Tableau de bord",
+      "edition": "Edition"
+    },
+    "planningPokerValues": {
+      "status": {
+        "DRAFT": "Brouillon",
+        "PENDING": "En cours",
+        "FINISHED": "Terminé",
+        "ARCHIVED": "Archivé"
+      }
+    },
+    "AdminPage": {
+      "title": "Tableau de bord",
+      "newPlanningPoker": "Nouveau planning poker",
+      "table": {
+        "columns": {
+          "title": "Titre",
+          "status": "Statut",
+          "action": "Action"
+        }
+      }
+    },
+    "ManagePlanningPoker": {
+      "title": "Gestion du planning poker",
+      "form": {
+        "title": "Titre",
+        "description": "Description",
+        "submit": "Enregistrer"
+      }
+    }
+  }
+}
