@@ -1,99 +1,138 @@
 "use client";
 
-import { Check, X } from "lucide-react";
+import { Ban, Check, RefreshCcw, X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
-import { useState } from "react";
+import { forwardRef, useState, useImperativeHandle } from "react";
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
+
+export type ChildDialogRef = {
+  open: () => void;
+  close: () => void;
+};
 
 interface ActionvalidationProps {
-  mainTitle: string;
-  mainDescription: string;
-  mainActionLabel: string;
-  mainIcon: React.ReactElement;
+  title: React.ReactElement;
+  description: React.ReactElement;
+  buttonTitle: string;
+  isPending: boolean;
+  isError: boolean;
+  isSuccess: boolean;
   onValidate: () => void;
+  onClose?: () => void;
+  icon?: React.ReactElement;
+  buttonLabel?: string;
 }
 
-export default function Actionvalidation({
-  mainTitle,
-  mainDescription,
-  mainActionLabel,
-  mainIcon,
-  onValidate,
-}: ActionvalidationProps) {
-  const [open, setOpen] = useState(false);
+const Actionvalidation = forwardRef<ChildDialogRef, ActionvalidationProps>(
+  (
+    {
+      title,
+      description,
+      buttonLabel,
+      buttonTitle,
+      icon,
+      onValidate,
+      isPending,
+      isError,
+      isSuccess,
+      onClose,
+    },
+    ref
+  ) => {
+    const [open, setOpen] = useState(false);
 
-  const validateDelete = () => {
-    onValidate();
-  };
+    // Exposer les méthodes `open` et `close` au parent via la ref
+    useImperativeHandle(ref, () => ({
+      open: () => setOpen(true),
+      close: () => setOpen(false),
+    }));
 
-  const toggleDialog = () => {
-    setOpen(!open);
-  };
+    const validateDelete = () => {
+      onValidate();
+    };
 
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button title={mainActionLabel} variant="ghost">
-          {mainIcon}
-          {mainActionLabel && <>&nbsp;{mainActionLabel}</>}
+    const toggleDialog = () => {
+      setOpen(!open);
+    };
+
+    const closeDialog = () => {
+      if (onClose) {
+        onClose();
+      }
+      toggleDialog();
+    };
+
+    return (
+      <Dialog open={open} onOpenChange={setOpen}>
+        <Button title={buttonTitle} variant="ghost" onClick={toggleDialog}>
+          {icon && icon}
+          {buttonLabel && buttonLabel !== "" && <>&nbsp;{buttonLabel}</>}
         </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>{mainTitle}</DialogTitle>
-        </DialogHeader>
-        <div className="flex flex-col gap-4">
-          <p className="text-sm font">{mainDescription}</p>
-          <div className="grid grid-cols-5 gap-4 w-full">
-            <Button
-              type="button"
-              title="Annuler l'action"
-              className="col-span-2"
-              onClick={toggleDialog}
-              variant="ghost"
-            >
-              <X />
-              &nbsp; Annuler
-            </Button>
-            <Button
-              type="button"
-              title="Valider l'action"
-              className="col-span-3"
-              onClick={validateDelete}
-            >
-              <Check />
-              &nbsp; Valider
-            </Button>
+        <DialogContent
+          className="sm:max-w-md"
+          aria-describedby="Fenêtre de validation d'action"
+        >
+          <DialogHeader>
+            <DialogTitle>{title}</DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col gap-4">
+            <div className="text-sm font">{description}</div>
+            {!isSuccess && (
+              <div className="flex gap-4 w-full justify-center">
+                <Button
+                  type="button"
+                  title="Annuler l'action"
+                  onClick={closeDialog}
+                  variant="ghost"
+                  disabled={isPending}
+                >
+                  <X />
+                  &nbsp; Annuler
+                </Button>
+                <Button
+                  type="button"
+                  title="Valider l'action"
+                  onClick={validateDelete}
+                  disabled={isPending}
+                >
+                  <Check />
+                  &nbsp; Valider
+                </Button>
+              </div>
+            )}
           </div>
-        </div>
-        <DialogFooter className="sm:justify-start">
-          {/* {(isError || isPending || isSuccess) && (
-            <Alert variant={isError ? "destructive" : "default"}>
-              {isPending && <RefreshCcw className="h-4 w-4" />}
-              {isError && <Ban className="h-4 w-4" />}
-              {isSuccess && <Check className="h-4 w-4" />}
-              <AlertTitle>
-                {isPending && "Traitement en cours"}
-                {isError && "Echec"}
-                {isSuccess && "Succès"}
-              </AlertTitle>
-              <AlertDescription>
-                {isPending &&
-                  "Création du planning poker en cours, merci de patienter quelques instants."}
-                {isError && "La création du planning poker a échoué."}
-                {isSuccess && "Le planning poker a été créé avec succès."}
-              </AlertDescription>
-            </Alert>
-          )} */}
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-}
+          <DialogFooter className="sm:justify-start">
+            {(isError || isPending || isSuccess) && (
+              <Alert variant={isError ? "destructive" : "default"}>
+                {isPending && <RefreshCcw className="h-4 w-4" />}
+                {isError && <Ban className="h-4 w-4" />}
+                {isSuccess && <Check className="h-4 w-4" />}
+                <AlertTitle>
+                  {isPending && "Traitement en cours"}
+                  {isError && "Echec"}
+                  {isSuccess && "Succès"}
+                </AlertTitle>
+                <AlertDescription>
+                  {isPending &&
+                    "Suppression du planning poker en cours, merci de patienter quelques instants."}
+                  {isError && "La suppression du planning poker a échoué."}
+                  {isSuccess && "Le planning poker a été supprimé avec succès."}
+                </AlertDescription>
+              </Alert>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+);
+
+Actionvalidation.displayName = "Actionvalidation";
+export default Actionvalidation;

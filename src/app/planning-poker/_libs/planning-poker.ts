@@ -18,7 +18,7 @@ export const planningPokerSchema: z.ZodType<PlanningPokerForm> = z.object({
       value: z.string(),
     })
   ),
-  stories: z.array(
+  userStories: z.array(
     z.object({
       id: z.string().min(0),
       planningPokerId: z.string().min(0),

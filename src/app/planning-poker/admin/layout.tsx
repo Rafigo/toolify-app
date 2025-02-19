@@ -28,7 +28,7 @@ export default function PlanningPokerLayout({
   const pathname = usePathname();
   const pathNames: BreadcrumbProps[] = pathname
     .split("/")
-    .filter((path) => path)
+    .filter((path) => ["planning-poker", "admin", "edition"].includes(path))
     .map((path) => ({
       id: path,
       path: getPlanningPokerRouteBySegment(path),

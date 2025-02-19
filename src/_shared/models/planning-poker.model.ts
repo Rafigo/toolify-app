@@ -22,13 +22,24 @@ export type PlanningPokerFromApi = {
   userStories: [];
 };
 
+export type UserStoryFromApi = {
+  id: string;
+  planningPokerId: string;
+  title: string;
+  description: string;
+  value: number;
+  rank: number;
+  createdAt: Date;
+  modifiedAt: Date;
+};
+
 // Front form
 export type PlanningPokerForm = {
   id: string;
   title: string;
   description: string;
   tags: { value: string }[];
-  stories: UserSroryForm[];
+  userStories: UserSroryForm[];
 };
 
 export type UserSroryForm = {

@@ -4,9 +4,8 @@ export const getPlanningPokerRouteBySegment = (pathname: string) => {
       return "";
     case "planning-poker":
     case "admin":
-      return "/planning-poker/admin/dashboard";
     case "edition":
-      return "/planning-poker/admin/edition";
+      return "/planning-poker/admin/dashboard";
     default:
       return "";
   }

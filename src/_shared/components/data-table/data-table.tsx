@@ -31,15 +31,17 @@ import {
 } from "../ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
 import { Button } from "../ui/button";
+import Spinner from "../spinner/spinner";
 
 interface DataTableProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   columns: ColumnDef<any, any>[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any[];
+  isLoading: boolean;
 }
 
-export function DataTable({ columns, data }: DataTableProps) {
+export function DataTable({ columns, data, isLoading }: DataTableProps) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -105,7 +107,12 @@ export function DataTable({ columns, data }: DataTableProps) {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="rounded-md border">
+      <div className="rounded-md border relative">
+        {isLoading && (
+          <div className="absolute inset-0 bg-white/90 flex items-center justify-center z-10 rounded-md">
+            <Spinner />
+          </div>
+        )}
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -165,7 +172,7 @@ export function DataTable({ columns, data }: DataTableProps) {
             variant="outline"
             size="sm"
             onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
+            disabled={!table.getCanPreviousPage() || isLoading}
           >
             Previous
           </Button>
@@ -173,7 +180,7 @@ export function DataTable({ columns, data }: DataTableProps) {
             variant="outline"
             size="sm"
             onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
+            disabled={!table.getCanNextPage() || isLoading}
           >
             Next
           </Button>

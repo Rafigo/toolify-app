@@ -104,6 +104,7 @@ const PlanningPokerDialogCreate = () => {
                       <Input
                         placeholder="Titre du planning poker"
                         {...field}
+                        readOnly={isPending || isSuccess}
                         disabled={isPending}
                       />
                     </FormControl>
@@ -116,6 +117,7 @@ const PlanningPokerDialogCreate = () => {
                 onSubmit={form.handleSubmit(onSubmit)}
                 title="Créer planning poker"
                 className="col-span-2"
+                disabled={isPending || isSuccess}
               >
                 <Check />
                 &nbsp; Créer
