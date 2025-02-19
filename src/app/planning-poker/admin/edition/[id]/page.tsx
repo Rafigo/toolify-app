@@ -1,15 +1,14 @@
 "use client";
 
-import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowDownToLine, CopyPlus, Trash, X } from "lucide-react";
+import { ArrowDownToLine, CopyPlus, Trash } from "lucide-react";
 import { planningPokerSchema } from "../../../_libs/planning-poker";
 import { PlanningPokerForm } from "@/models/planning-poker.model";
 import {
@@ -24,19 +23,19 @@ import { useCallback, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getPlanningPokerById } from "@/services/planning-poker/planning-poker.service";
 import { useParams } from "next/navigation";
-import useUpdatePlanningPoker from "@/hooks/usePlanningPoker";
-import UserStoriesForm from "app/planning-poker/_components/stories-management";
+import UserStoriesForm from "app/planning-poker/_components/user-story-list";
+import { useTranslations } from "next-intl";
+import TagsForm from "app/planning-poker/_components/tags-management";
+import usePlanningPokerFormHook from "app/planning-poker/_hooks/planning-poker-form.hook";
 
 const EditionPage = () => {
+  const intl = useTranslations("PlanningPoker.Edition");
   const id = useParams<{ id: string }>();
 
-  const {
-    mutate,
-    isError: mutateError,
-    isPending: mutationPending,
-  } = useUpdatePlanningPoker(id.id);
+  const { useUpdatePlanningPoker } = usePlanningPokerFormHook(id.id);
+  const { mutate } = useUpdatePlanningPoker;
 
-  const { data, error, isLoading, isRefetching, refetch } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["getPlanningPokerById", id],
     queryFn: async () => {
       const data = await getPlanningPokerById(id);
@@ -55,54 +54,45 @@ const EditionPage = () => {
       tags: [],
       description: "",
     },
-    mode: "onSubmit",
   });
 
   const onSubmit: SubmitHandler<PlanningPokerForm> = useCallback(
     (data) => {
+      console.log("is here");
       mutate({ id: id.id, title: data.title, description: data.description });
     },
     [id.id, mutate]
   );
 
-  // Tags
-  const {
-    fields: tagFields,
-    append: appendTag,
-    remove: removeTag,
-  } = useFieldArray({
-    control: form.control,
-    name: "tags",
-  });
-
-  const addTag = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      const newValue = (e.currentTarget as HTMLInputElement).value.trim();
-      if (newValue) {
-        appendTag({ value: newValue }); // Ajoute la nouvelle valeur
-        form.resetField("newItem"); // Réinitialise le champ
-      }
-    }
-  };
-
   useEffect(() => {
     if (data) {
+      console.log("here");
       form.setValue("id", data?.id);
       form.setValue("title", data?.title);
       form.setValue(
         "description",
         data.description && data.description !== "" ? data.description : ""
       );
-      form.setValue("userStories", data.userStories);
+      form.setValue(
+        "userStories",
+        data.userStories.map((userStory) => ({
+          ...userStory,
+          title:
+            userStory.title && userStory.title !== "" ? userStory.title : "",
+          description:
+            userStory.description && userStory.description !== ""
+              ? userStory.description
+              : "",
+        }))
+      );
     }
   }, [data, isLoading, form]);
 
   useEffect(() => {
-    if (mutateError) {
+    if (useUpdatePlanningPoker.isError) {
       console.log("error");
     }
-  }, [mutateError]);
+  }, [useUpdatePlanningPoker.isError]);
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -116,7 +106,9 @@ const EditionPage = () => {
     return () => document.removeEventListener("keydown", down);
   }, [form, onSubmit]);
 
-  const isFormPending = isLoading || mutationPending;
+  const isFormPending = isLoading || useUpdatePlanningPoker.isPending;
+
+  const title = form.watch("title");
 
   return (
     <div className="pb-10">
@@ -126,34 +118,32 @@ const EditionPage = () => {
           className="flex flex-col bg-white border rounded-xl"
         >
           <div className="flex justify-between items-center p-8">
-            <h1 className="text-gray-900 text-lg">
-              Configurer un planning poker
-            </h1>
+            <h1 className="text-gray-900 text-lg">{title}</h1>
             <div className="flex gap-2">
               <Button
                 variant="ghost"
-                title="Supprimer ce planning poker"
+                title={intl("actions.delete.buttonTitle")}
                 disabled={isFormPending}
               >
                 <Trash />
-                &nbsp;Supprimer
+                &nbsp;{intl("actions.delete.buttonLabel")}
               </Button>
               <Button
                 variant="outline"
-                title="Dupliquer ce planning poker"
+                title={intl("actions.duplicate.buttonTitle")}
                 disabled={isFormPending}
               >
                 <CopyPlus />
-                &nbsp;Dupliquer
+                &nbsp;{intl("actions.duplicate.buttonLabel")}
               </Button>
               <Button
-                title="Sauvegarder ce planning poker"
+                title={intl("actions.save.buttonTitle")}
                 type="submit"
                 onSubmit={form.handleSubmit(onSubmit)}
                 disabled={isFormPending}
               >
                 <ArrowDownToLine />
-                &nbsp;Sauvegarder
+                &nbsp;{intl("actions.save.buttonLabel")}
                 <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-gray-800 px-1.5 font-mono text-[10px] font-medium">
                   <span className="text-xs">⌘</span>S
                 </kbd>
@@ -163,7 +153,7 @@ const EditionPage = () => {
           <Separator />
           <div className="p-8">
             <h2 className="text-gray-900 font-semibold">
-              Informations générales
+              {intl("form.titles.mainInfo")}
             </h2>
             <div className="grid grid-cols-1 gap-8 mt-4">
               <div className="grid w-full max-w-md items-center gap-1.5">
@@ -172,10 +162,10 @@ const EditionPage = () => {
                   name="title"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Titre</FormLabel>
+                      <FormLabel>{intl("form.fields.title.label")}</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Titre du planning poker"
+                          placeholder={intl("form.fields.title.placeholder")}
                           {...field}
                           disabled={isFormPending}
                         />
@@ -191,10 +181,14 @@ const EditionPage = () => {
                   name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Description</FormLabel>
+                      <FormLabel>
+                        {intl("form.fields.description.label")}
+                      </FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder="Description du planning poker"
+                          placeholder={intl(
+                            "form.fields.description.placeholder"
+                          )}
                           {...field}
                           disabled={isFormPending}
                         />
@@ -204,31 +198,7 @@ const EditionPage = () => {
                   )}
                 />
               </div>
-              <div className="grid w-full items-center gap-1.5">
-                <Label htmlFor="newTag" className="pb-2">
-                  Tag(s)
-                </Label>
-                <Input
-                  type="text"
-                  id="newTag"
-                  placeholder="Ajouter un tag"
-                  onKeyDown={addTag}
-                  className="max-w-xs mb-1"
-                  {...form.register("newItem")}
-                  disabled={isFormPending}
-                />
-                <div className="flex gap-2">
-                  {tagFields.map((tag, index) => (
-                    <div
-                      key={`tag-${index}`}
-                      className="w-fit p-1 rounded-sm flex items-center gap-2 text-sm bg-blue-50 hover:cursor-pointer hover:bg-red-50"
-                      onClick={() => removeTag(index)}
-                    >
-                      <X size="16px" /> {tag.value}
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <TagsForm disabled={isFormPending} />
             </div>
           </div>
           <Separator />

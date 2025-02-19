@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import { getLocale, getMessages } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
 import { SessionProvider } from "next-auth/react";
-import { Space_Grotesk } from "next/font/google";
+import { Manrope } from "next/font/google";
 import "./globals.css";
 import { TanstackProviders } from "@/libs/query-provider";
-import { ToastProvider } from "@/components/ui/toast";
+import { Toaster } from "@/components/ui/toaster";
 
-const geistSans = Space_Grotesk({
+const geistSans = Manrope({
   variable: "--font-space-grotesk",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
@@ -34,7 +34,7 @@ export default async function RootLayout({
         <NextIntlClientProvider messages={messages}>
           <TanstackProviders>
             <SessionProvider>{children}</SessionProvider>
-            <ToastProvider />
+            <Toaster />
           </TanstackProviders>
         </NextIntlClientProvider>
       </body>

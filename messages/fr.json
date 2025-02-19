@@ -30,7 +30,7 @@
       "admin": "Administration",
       "planning-poker": "Planning Poker",
       "dashboard": "Tableau de bord",
-      "edition": "Edition"
+      "edition": "Configurer planning poker"
     },
     "planningPokerValues": {
       "status": {
@@ -51,12 +51,40 @@
         }
       }
     },
-    "ManagePlanningPoker": {
+    "Edition": {
       "title": "Gestion du planning poker",
+      "actions": {
+        "delete": {
+          "buttonLabel": "Supprimer",
+          "buttonTitle": "Supprimer le planning poker"
+        },
+        "duplicate": {
+          "buttonLabel": "Dupliquer",
+          "buttonTitle": "Dupliquer le planning poker"
+        },
+        "save": {
+          "buttonLabel": "Sauvegarder",
+          "buttonTitle": "Sauvegarder le planning poker"
+        }
+      },
       "form": {
-        "title": "Titre",
-        "description": "Description",
-        "submit": "Enregistrer"
+        "titles": {
+          "mainInfo": "Informations générales"
+        },
+        "fields": {
+          "title": {
+            "label": "Titre",
+            "placeholder": "Titre du planning poker"
+          },
+          "description": {
+            "label": "Description",
+            "placeholder": "Description du planning poker"
+          },
+          "tags": {
+            "label": "Tag(s)",
+            "placeholder": "Ajouter un tag"
+          }
+        }
       }
     }
   }

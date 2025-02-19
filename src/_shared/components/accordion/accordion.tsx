@@ -25,7 +25,7 @@ export default function Accordion({
   }, []);
 
   return (
-    <div className={cn("p-4", className)}>
+    <div className={cn("p-2", className)}>
       <div className="grid grid-cols-12 box-border">
         <div className="col-span-6 flex box-border">{accordionHeader}</div>
         <div className="col-span-6 flex justify-end w-full box-border">
@@ -46,7 +46,7 @@ export default function Accordion({
         </div>
       </div>
       <div
-        className={`grid overflow-hidden transition-all duration-300 ease-in-out ${accordionOpen ? "grid-rows-[1fr] opacity-100 mt-4" : "grid-rows-[0fr] opacity-0"}`}
+        className={`grid overflow-hidden transition-all duration-300 ease-in-out ${accordionOpen ? "grid-rows-[1fr] opacity-100 mt-2" : "grid-rows-[0fr] opacity-0"}`}
       >
         <div className="overflow-hidden">{accordionContent}</div>
       </div>

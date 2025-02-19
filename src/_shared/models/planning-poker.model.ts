@@ -19,7 +19,7 @@ export type PlanningPokerFromApi = {
   deletedAt: Date;
   modifiedAt: Date;
   sessionUrl: string;
-  userStories: [];
+  userStories: UserStoryFromApi[];
 };
 
 export type UserStoryFromApi = {
@@ -27,8 +27,8 @@ export type UserStoryFromApi = {
   planningPokerId: string;
   title: string;
   description: string;
-  value: number;
-  rank: number;
+  value: string;
+  rank: string;
   createdAt: Date;
   modifiedAt: Date;
 };
@@ -39,18 +39,15 @@ export type PlanningPokerForm = {
   title: string;
   description: string;
   tags: { value: string }[];
-  userStories: UserSroryForm[];
+  userStories: UserStoryForm[];
 };
 
-export type UserSroryForm = {
+export type UserStoryForm = {
   id: string;
-  planningPokerId: string;
   title: string;
   description: string;
-  value: number;
-  rank: number;
-  createdAt: Date;
-  modifiedAt: Date;
+  value: string;
+  rank: string;
 };
 
 // Components interface

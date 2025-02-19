@@ -1,10 +1,12 @@
+import { UserStoryForm } from "@/models/planning-poker.model";
 import { updatePlanningPoker } from "@/services/planning-poker/planning-poker.service";
+import userStoryService from "@/services/user-story/user-story.service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-const useUpdatePlanningPoker = (planningPokerId: string) => {
+const usePlanningPokerFormHook = (planningPokerId: string) => {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  const useUpdatePlanningPoker = useMutation({
     mutationFn: updatePlanningPoker,
     // When mutate is called:
     onMutate: async (nextPlanningPokerValues) => {
@@ -47,6 +49,49 @@ const useUpdatePlanningPoker = (planningPokerId: string) => {
       }
     },
   });
+
+  const useCreateUserStory = useMutation({
+    mutationFn: async (planningPokerId: string) => {
+      return userStoryService.create({ planningPokerId });
+    },
+    onSuccess: async () => {
+      queryClient.invalidateQueries();
+    },
+    onError: (error) => {
+      console.error("Echec de la création de la user story:", error);
+    },
+  });
+
+  const useUpdateUserStory = useMutation({
+    mutationFn: async (userStory: UserStoryForm) => {
+      return userStoryService.update({ userStory });
+    },
+    onSuccess: async () => {
+      // queryClient.invalidateQueries({ queryKey: ["getPlanningPokerById"] });
+    },
+    onError: (error) => {
+      console.error("Echec de la création de la user story:", error);
+    },
+  });
+
+  const useRemoveUserStory = useMutation({
+    mutationFn: async (userStoryId: string) => {
+      return userStoryService.remove({ userStoryId });
+    },
+    onSuccess: async () => {
+      queryClient.invalidateQueries();
+    },
+    onError: (error) => {
+      console.error("Echec de la suppression de la user story:", error);
+    },
+  });
+
+  return {
+    useUpdatePlanningPoker,
+    useCreateUserStory,
+    useUpdateUserStory,
+    useRemoveUserStory,
+  };
 };
 
-export default useUpdatePlanningPoker;
+export default usePlanningPokerFormHook;
