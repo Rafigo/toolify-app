@@ -1,47 +1,56 @@
 import axios from "axios";
 
-import { UserSroryForm, UserStoryFromApi } from "@/models/planning-poker.model";
+import { UserStoryFromApi } from "@/models/planning-poker.model";
+import {
+  UserStoryPayloadCreate,
+  UserStoryPayloadUpdate,
+  UserStoryPayloadRemove,
+  UserStoryPayloadGetAllByPlanningPokerId,
+  UserStoryPayloadUpdateRanks,
+} from "./user-story.interface";
 
-export interface UpdatePlanningPokerPayload {
-  id: string;
-  title: string;
-  description: string;
-}
+const urlRoot = "http://localhost:3001/user-story";
 
-export interface CreateUserStoryPayload {
-  planningPokerId: string;
-}
+const getByPlanningPokerId = async ({
+  planningPokerId,
+}: UserStoryPayloadGetAllByPlanningPokerId) => {
+  const { data } = await axios.get(
+    `${urlRoot}/by-planning-poker/${planningPokerId}`
+  );
+  return data as UserStoryFromApi[];
+};
 
-export interface UpdateUserStoryPayload {
-  userStory: UserSroryForm;
-}
-
-export interface RemoveUserStoryPayload {
-  userStoryId: string;
-}
-
-const create = async ({ planningPokerId }: CreateUserStoryPayload) => {
-  const { data } = await axios.post("http://localhost:3001/user-story/create", {
+const create = async ({ planningPokerId }: UserStoryPayloadCreate) => {
+  const { data } = await axios.post(`${urlRoot}/create`, {
     planningPokerId,
     title: "test",
   });
   return data as UserStoryFromApi;
 };
 
-const update = async ({ userStory }: UpdateUserStoryPayload) => {
-  const { data } = await axios.put("http://localhost:3001/user-story/update", {
+const update = async ({ userStory }: UserStoryPayloadUpdate) => {
+  const { data } = await axios.put(`${urlRoot}/update`, {
     ...userStory,
   });
   return data as UserStoryFromApi;
 };
 
-const remove = async ({ userStoryId }: RemoveUserStoryPayload) => {
-  const { data } = await axios.delete(
-    `http://localhost:3001/user-story/delete/${userStoryId}`
-  );
+const remove = async ({ userStoryId }: UserStoryPayloadRemove) => {
+  const { data } = await axios.delete(`${urlRoot}/delete/${userStoryId}`);
   return data as UserStoryFromApi;
 };
 
-const userStoryService = { create, update, remove };
+const updateRanks = async (values: UserStoryPayloadUpdateRanks[]) => {
+  const { data } = await axios.put(`${urlRoot}/update-ranks`, values);
+  return data as any;
+};
+
+const userStoryService = {
+  getByPlanningPokerId,
+  create,
+  update,
+  remove,
+  updateRanks,
+};
 
 export default userStoryService;

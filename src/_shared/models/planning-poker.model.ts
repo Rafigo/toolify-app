@@ -6,6 +6,12 @@ export enum EnumPlanningPokerStatus {
   FINISHED = "FINISHED",
   ARCHIVED = "ARCHIVED",
 }
+export enum EnumUserStoryStatus {
+  TODO = "TODO",
+  ONGOING = "ONGOING",
+  DONE = "DONE",
+  CANCELLED = "CANCELLED",
+}
 
 // From API
 export type PlanningPokerFromApi = {
@@ -17,20 +23,21 @@ export type PlanningPokerFromApi = {
   tags: string[];
   createdAt: Date;
   deletedAt: Date;
-  modifiedAt: Date;
+  updatedAt: Date;
   sessionUrl: string;
   userStories: UserStoryFromApi[];
 };
 
 export type UserStoryFromApi = {
   id: string;
-  planningPokerId: string;
   title: string;
   description: string;
   value: string;
   rank: string;
   createdAt: Date;
   modifiedAt: Date;
+  updatedAt: Date;
+  status: EnumUserStoryStatus;
 };
 
 // Front form
@@ -50,4 +57,4 @@ export type UserStoryForm = {
   rank: string;
 };
 
-// Components interface
+// Payload to the backend

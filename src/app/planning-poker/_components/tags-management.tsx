@@ -11,11 +11,7 @@ import { Label } from "@/components/ui/label";
 import { useTranslations } from "next-intl";
 import { X } from "lucide-react";
 
-interface TagsFormProps {
-  disabled: boolean;
-}
-
-const TagsForm = ({ disabled }: TagsFormProps) => {
+const TagsForm = () => {
   const intl = useTranslations("PlanningPoker.Edition");
 
   const { mutate } = useMutation({
@@ -71,7 +67,6 @@ const TagsForm = ({ disabled }: TagsFormProps) => {
         onKeyDown={addTag}
         className="max-w-xs mb-1"
         {...register("newItem")}
-        disabled={disabled}
       />
       <div className="flex gap-2">
         {fields.map((tag, index) => (

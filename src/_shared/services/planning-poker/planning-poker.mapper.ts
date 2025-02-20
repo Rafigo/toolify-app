@@ -1,7 +1,13 @@
-import { PlanningPokerFromApi } from "@/models/planning-poker.model";
+import {
+  PlanningPokerForm,
+  PlanningPokerFromApi,
+} from "@/models/planning-poker.model";
 
 export const mapPlanningPokerObject = (
-  planningPokers: PlanningPokerFromApi[]
-) => {
-  return planningPokers.map((planningPoker) => planningPoker);
+  planningPoker: PlanningPokerFromApi
+): PlanningPokerForm => {
+  return {
+    ...planningPoker,
+    tags: planningPoker.tags?.map((tag) => ({ value: tag })) ?? [],
+  };
 };

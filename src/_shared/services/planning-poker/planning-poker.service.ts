@@ -1,20 +1,14 @@
 import axios from "axios";
 
 import { PlanningPokerFromApi } from "@/models/planning-poker.model";
+import {
+  PlanningPokerPayloadCreate,
+  PlanningPokerPayloadGetById,
+  PlanningPokerPayloadRemove,
+  PlanningPokerPayloadUpdate,
+} from "./planning-poker.interface";
 
-interface GetPlanningPokerByIdProps {
-  id: string;
-}
-
-interface InitPlanningPoker {
-  title: string;
-}
-
-export interface UpdatePlanningPokerPayload {
-  id: string;
-  title: string;
-  description: string;
-}
+const urlRoot = "http://localhost:3001/planning-poker";
 
 export const getAllPlanningPoker = async () => {
   const { data } = await axios.get(
@@ -23,52 +17,43 @@ export const getAllPlanningPoker = async () => {
   return data as PlanningPokerFromApi[];
 };
 
-export const getPlanningPokerById = async ({
-  id,
-}: GetPlanningPokerByIdProps) => {
-  const { data } = await axios.get(
-    `http://localhost:3001/planning-poker/find-one/${id}`
-  );
+export const getById = async ({
+  planningPokerId,
+}: PlanningPokerPayloadGetById) => {
+  const { data } = await axios.get(`${urlRoot}/find-one/${planningPokerId}`);
   return data as PlanningPokerFromApi;
 };
 
-/**
- * Initializes a new Planning Poker session by sending a POST request to the server.
- *
- * @param {InitPlanningPoker} param - The initialization parameters for the Planning Poker session.
- * @param {string} param.title - The title of the Planning Poker session.
- * @returns {Promise<PlanningPokerFromApi>} A promise that resolves to the data returned from the API.
- */
-export const initPlanningPoker = async ({ title }: InitPlanningPoker) => {
-  const { data } = await axios.post(
-    "http://localhost:3001/planning-poker/create",
-    { title }
-  );
+export const create = async ({ title }: PlanningPokerPayloadCreate) => {
+  const { data } = await axios.post(`${urlRoot}/create`, { title });
   return data as PlanningPokerFromApi;
 };
 
-/**
- * Removes a planning poker item by its ID.
- *
- * @param {Object} params - The parameters for the remove function.
- * @param {string} params.id - The ID of the planning poker item to be removed.
- * @returns {Promise<PlanningPokerFromApi>} The data returned from the API after deletion.
- */
-export const remove = async ({ id }: { id: string }) => {
-  const { data } = await axios.delete(
-    `http://localhost:3001/planning-poker/delete/${id}`
-  );
-  return data as PlanningPokerFromApi;
-};
-
-export const updatePlanningPoker = async ({
+export const update = async ({
   id,
   title,
   description,
-}: UpdatePlanningPokerPayload) => {
-  const { data } = await axios.put(
-    "http://localhost:3001/planning-poker/update",
-    { id, title, description }
-  );
+}: PlanningPokerPayloadUpdate) => {
+  const { data } = await axios.put(`${urlRoot}/update`, {
+    id,
+    title,
+    description,
+  });
   return data as PlanningPokerFromApi;
 };
+
+export const remove = async ({
+  planningPokerId,
+}: PlanningPokerPayloadRemove) => {
+  const { data } = await axios.delete(`${urlRoot}/${planningPokerId}`);
+  return data as PlanningPokerFromApi;
+};
+
+const planningPokerService = {
+  getById,
+  create,
+  update,
+  remove,
+};
+
+export default planningPokerService;
